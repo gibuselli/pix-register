@@ -58,6 +58,10 @@ public class PixKey {
 
     protected PixKey() {}
 
+    public UUID getId() {
+        return id;
+    }
+
     public KeyType getType() {
         return type;
     }

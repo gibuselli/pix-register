@@ -1,11 +1,11 @@
 package com.gibuselli.pix_register.interfaces;
 
 import com.gibuselli.pix_register.domain.pixkey.PixKeyService;
+import com.gibuselli.pix_register.infrastructure.rest.PixRegisterRequest;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/pix-key")
@@ -18,7 +18,7 @@ public class PixRegisterController {
     }
 
     @PostMapping
-    public ResponseEntity<String> registerPixKey() {
+    public ResponseEntity<String> registerPixKey(@Validated @RequestBody final @NotNull PixRegisterRequest request) {
         return null;
     }
 

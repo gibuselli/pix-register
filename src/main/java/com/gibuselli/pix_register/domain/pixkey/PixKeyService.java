@@ -1,8 +1,12 @@
 package com.gibuselli.pix_register.domain.pixkey;
 
 import com.gibuselli.pix_register.application.pixkey.validator.*;
+import com.gibuselli.pix_register.domain.customer.Customer;
 import com.gibuselli.pix_register.domain.customer.CustomerService;
+import com.gibuselli.pix_register.infrastructure.dto.PixRegisterData;
+import com.gibuselli.pix_register.infrastructure.exception.PixKeyAlreadyExistsException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -25,18 +29,29 @@ public class PixKeyService {
         validatorContext.add(new LegalPersonValidator());
     }
 
-    public void registerPixKey(UUID customerId, KeyType keyType, String keyValue) {
-        if (pixKeyRepository.existsByKeyTypeAndKeyValue(keyType, keyValue)) {
-            throw new RuntimeException("asdas");
+    public UUID registerPixKey(PixRegisterData data) {
+        if (pixKeyRepository.existsByKeyTypeAndKeyValue(data.keyType(), data.keyValue())) {
+            throw new PixKeyAlreadyExistsException(data.keyType().name(), data.keyValue());
         }
 
-        final var customer = customerService.findCustomerById(customerId);
+        final var customer = customerService.findOrCreateNew(data);
 
         try {
-            validatorContext.validate(customer, keyType, keyValue);
+            validatorContext.validate(customer, data.keyType(), data.keyValue());
         } catch (Exception ex) {
             throw ex;
         }
+
+        final var pixKey = createAndSavePixKey(customer, data.keyType(), data.keyValue());
+
+        return pixKey.getId();
+    }
+
+    @Transactional
+    private PixKey createAndSavePixKey(
+            final Customer customer,
+            final KeyType keyType,
+            final String keyValue) {
 
         final var pixKey =
                 new PixKey.Builder()
@@ -46,5 +61,6 @@ public class PixKeyService {
                         .isEnabled(true)
                         .build();
 
+        return pixKeyRepository.save(pixKey);
     }
 }

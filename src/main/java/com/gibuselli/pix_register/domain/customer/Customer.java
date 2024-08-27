@@ -21,14 +21,18 @@ public class Customer implements Serializable {
     @Column(nullable = false)
     private String name;
 
+    @Column
+    private String lastName;
+
     @Column(nullable = false)
     private String agency;
 
     @Column(nullable = false)
     private String account;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "ACCOUNT_TYPE", nullable = false)
-    private String accountType;
+    private AccountType accountType;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "PERSON_TYPE", nullable = false)
@@ -56,6 +60,7 @@ public class Customer implements Serializable {
 
     public Customer(Builder builder) {
         this.name = builder.name;
+        this.lastName = builder.lastName;
         this.agency = builder.agency;
         this.account = builder.account;
         this.accountType = builder.accountType;
@@ -63,23 +68,6 @@ public class Customer implements Serializable {
     }
 
     protected Customer() {}
-
-
-    public String getName() {
-        return name;
-    }
-
-    public String getAgency() {
-        return agency;
-    }
-
-    public String getAccount() {
-        return account;
-    }
-
-    public String getAccountType() {
-        return accountType;
-    }
 
     public boolean isLegalPerson() {
         return PersonType.LEGAL.equals(personType);
@@ -99,13 +87,19 @@ public class Customer implements Serializable {
 
     public static class Builder {
         private String name;
+        private String lastName;
         private String agency;
         private String account;
-        private String accountType;
+        private AccountType accountType;
         private PersonType personType;
 
         public Builder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public Builder lastName(String lastName) {
+            this.lastName = lastName;
             return this;
         }
 
@@ -119,7 +113,7 @@ public class Customer implements Serializable {
             return this;
         }
 
-        public Builder accountType(String accountType) {
+        public Builder accountType(AccountType accountType) {
             this.accountType = accountType;
             return this;
         }
