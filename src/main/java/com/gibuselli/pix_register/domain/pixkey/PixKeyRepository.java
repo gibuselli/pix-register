@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface PixKeyRepository extends JpaRepository<PixKey, UUID> {
 
-    boolean existsByKeyTypeAndKeyValue(KeyType keyType, String keyValue);
+    boolean existsByTypeAndValue(KeyType type, String value);
 }

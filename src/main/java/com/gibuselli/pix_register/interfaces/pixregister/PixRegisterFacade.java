@@ -1,5 +1,8 @@
 package com.gibuselli.pix_register.interfaces.pixregister;
 
+import com.gibuselli.pix_register.domain.customer.AccountType;
+import com.gibuselli.pix_register.domain.customer.PersonType;
+import com.gibuselli.pix_register.domain.pixkey.KeyType;
 import com.gibuselli.pix_register.domain.pixkey.PixKeyService;
 import com.gibuselli.pix_register.infrastructure.dto.PixRegisterData;
 import com.gibuselli.pix_register.infrastructure.rest.PixRegisterRequest;
@@ -18,10 +21,10 @@ public class PixRegisterFacade {
 
     public PixRegisterResponse registerPixKey(final @NotNull PixRegisterRequest request) {
         final var pixRegisterData = new PixRegisterData(
-                request.getKeyType(),
+                KeyType.fromValue(request.getKeyType()),
                 request.getKeyValue(),
-                request.getAccountType(),
-                request.getPersonType(),
+                AccountType.fromValue(request.getAccountType()),
+                PersonType.fromValue(request.getPersonType()),
                 request.getAgency(),
                 request.getAccount(),
                 request.getCustomerName(),

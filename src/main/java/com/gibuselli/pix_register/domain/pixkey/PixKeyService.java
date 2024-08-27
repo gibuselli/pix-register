@@ -30,7 +30,7 @@ public class PixKeyService {
     }
 
     public UUID registerPixKey(PixRegisterData data) {
-        if (pixKeyRepository.existsByKeyTypeAndKeyValue(data.keyType(), data.keyValue())) {
+        if (pixKeyRepository.existsByTypeAndValue(data.keyType(), data.keyValue())) {
             throw new PixKeyAlreadyExistsException(data.keyType().name(), data.keyValue());
         }
 

@@ -1,9 +1,6 @@
 package com.gibuselli.pix_register.infrastructure.http;
 
-import com.gibuselli.pix_register.infrastructure.exception.CnpjOrCpfAlreadyRegistered;
-import com.gibuselli.pix_register.infrastructure.exception.InvalidKeyException;
-import com.gibuselli.pix_register.infrastructure.exception.MaxKeysException;
-import com.gibuselli.pix_register.infrastructure.exception.PixKeyAlreadyExistsException;
+import com.gibuselli.pix_register.infrastructure.exception.*;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,6 +41,25 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             final WebRequest request) {
         final var result = ex.getBindingResult();
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(getValidationErrors(result));
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMediaTypeNotAcceptable(
+            HttpMediaTypeNotAcceptableException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
+        final var msg =
+                Optional.ofNullable(NestedExceptionUtils.getRootCause(ex))
+                        .map(Throwable::getMessage)
+                        .orElse(ERROR_GENERIC);
+
+        final var errorResponse =
+                new ErrorsResponse(
+                        ERROR_DESSERIALIZATION_MESSAGE,
+                        Map.of(DETAILS, msg));
+
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorResponse);
     }
 
     @Override
@@ -89,7 +106,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             CnpjOrCpfAlreadyRegistered.class,
             InvalidKeyException.class,
             MaxKeysException.class,
-            PixKeyAlreadyExistsException.class
+            PixKeyAlreadyExistsException.class,
+            InvalidKeyType.class,
+            InvalidPersonType.class,
+            InvalidAccountType.class
     })
     protected ResponseEntity<ErrorsResponse> handlePixKeyValidations(final RuntimeException ex) {
         final var errorResponse =
@@ -108,8 +128,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                         error -> {
                             final String field;
 
+                            if ("Chave Pix inválida.".equalsIgnoreCase(error.getDefaultMessage())) {
+                                return;
+                            }
+
                             if (error instanceof FieldError) {
                                 field = ((FieldError) error).getField();
+                            } else if ("pixRegisterRequest".equalsIgnoreCase(error.getObjectName())) {
+                                field = "key";
                             } else {
                                 field = error.getObjectName();
                             }

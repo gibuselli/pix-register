@@ -13,8 +13,19 @@ public class PixRegisterRequestValidator implements ConstraintValidator<ValidPix
             return true; // Validação para objeto nulo é feita em outro lugar
         }
 
-        String keyValue = request.getKeyValue();
-        KeyType keyType = request.getKeyType();
+        String keyValue;
+        KeyType keyType;
+
+         try {
+             keyValue = request.getKeyValue();
+             keyType = KeyType.fromValue(request.getKeyType());
+         } catch (Exception ex) {
+             context
+                     .buildConstraintViolationWithTemplate(ex.getMessage())
+                     .addConstraintViolation();
+
+             return false;
+         }
 
         return switch (keyType) {
             case PHONE -> validatePhone(keyValue, context);

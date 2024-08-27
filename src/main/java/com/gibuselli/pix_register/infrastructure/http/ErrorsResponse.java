@@ -8,6 +8,14 @@ public class ErrorsResponse {
 
     private Map<String, Object> errors = new HashMap<>();
 
+    public ErrorsResponse(String message, Map<String, Object> errors) {
+        this.message = message;
+        this.errors = errors;
+    }
+
+    public ErrorsResponse() {
+    }
+
     public void setMessage(String message) {
         this.message = message;
     }
@@ -16,11 +24,11 @@ public class ErrorsResponse {
         errors.put(errorKey, errorValue);
     }
 
-    public ErrorsResponse(String message, Map<String, Object> errors) {
-        this.message = message;
-        this.errors = errors;
+    public String getMessage() {
+        return message;
     }
 
-    public ErrorsResponse() {
+    public Map<String, Object> getErrors() {
+        return errors;
     }
 }
