@@ -3,7 +3,7 @@ package com.gibuselli.pix_register.infrastructure.rest;
 import com.gibuselli.pix_register.domain.customer.AccountType;
 import com.gibuselli.pix_register.domain.customer.PersonType;
 import com.gibuselli.pix_register.domain.pixkey.KeyType;
-import com.gibuselli.pix_register.infrastructure.validator.ValidPixKey;
+import com.gibuselli.pix_register.infrastructure.rest.validator.ValidPixKey;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -47,5 +47,29 @@ public class PixRegisterRequest {
 
     public String getKeyValue() {
         return keyValue;
+    }
+
+    public AccountType getAccountType() {
+        return accountType;
+    }
+
+    public PersonType getPersonType() {
+        return personType;
+    }
+
+    public String getAgency() {
+        return agency;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public String getCustomerLastName() {
+        return customerLastName;
     }
 }

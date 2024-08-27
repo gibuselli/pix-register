@@ -1,4 +1,4 @@
-package com.gibuselli.pix_register.infrastructure.validator;
+package com.gibuselli.pix_register.infrastructure.rest.validator;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

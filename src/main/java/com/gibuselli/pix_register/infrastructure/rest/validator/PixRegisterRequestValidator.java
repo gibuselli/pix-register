@@ -1,4 +1,4 @@
-package com.gibuselli.pix_register.infrastructure.validator;
+package com.gibuselli.pix_register.infrastructure.rest.validator;
 
 import com.gibuselli.pix_register.domain.pixkey.KeyType;
 import com.gibuselli.pix_register.infrastructure.rest.PixRegisterRequest;
