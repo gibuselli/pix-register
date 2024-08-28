@@ -9,7 +9,7 @@ import com.gibuselli.pix_register.infrastructure.dto.PixUpdateData;
 import com.gibuselli.pix_register.infrastructure.exception.DisabledPixException;
 import com.gibuselli.pix_register.infrastructure.exception.PixKeyAlreadyExistsException;
 import com.gibuselli.pix_register.infrastructure.exception.PixKeyNotFoundException;
-import org.apache.commons.lang3.StringUtils;
+import com.gibuselli.pix_register.infrastructure.logger.CustomLogger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +18,8 @@ import java.util.UUID;
 
 @Service
 public class PixKeyService {
+
+    private static final CustomLogger log = CustomLogger.getLogger(PixKeyService.class);
 
     private final PixKeyRepository pixKeyRepository;
 
@@ -35,6 +37,7 @@ public class PixKeyService {
         validatorContext.add(new LegalPersonValidator());
     }
 
+    @Transactional
     public UUID registerPixKey(PixRegisterData data) {
         if (pixKeyRepository.existsByTypeAndValue(data.keyType(), data.keyValue())) {
             throw new PixKeyAlreadyExistsException(data.keyType().name(), data.keyValue());
@@ -45,31 +48,57 @@ public class PixKeyService {
         try {
             validatorContext.validate(customer, data.keyType(), data.keyValue());
         } catch (Exception ex) {
+            log.tag("agency", customer.getAgency())
+                    .tag("account", customer.getAccount())
+                    .tag("keyType", data.keyType().name())
+                    .tag("keyValue", data.keyValue())
+                    .error(ex.getMessage());
+
             throw ex;
         }
 
         final var pixKey = createAndSavePixKey(customer, data.keyType(), data.keyValue());
 
+        log.tag("name", customer.getName())
+                .tag("lastName", customer.getLastName())
+                .tag("personType", customer.getPersonType().name())
+                .tag("agency", customer.getAgency())
+                .tag("account", customer.getAccount())
+                .tag("accountType", customer.getAccountType().name())
+                .tag("account", customer.getAccount())
+                .tag("keyType", pixKey.getType().name())
+                .tag("keyValue", pixKey.getValue())
+                .info("pix_key_created");
+
         return pixKey.getId();
     }
 
+    @Transactional
     public PixKey updatePixKey(PixUpdateData data) {
         final var pixKey = pixKeyRepository.findByIdAndIsEnabled(data.id(), true)
                 .orElseThrow(() -> new PixKeyNotFoundException(data.id()));
 
         final var customer = pixKey.getCustomer();
 
-        customer.setAgency(data.agency());
-        customer.setAccount(data.account());
-        customer.setName(data.customerName());
-
-        if (StringUtils.isNotEmpty(data.customerLastName())) {
-            customer.setLastName(data.customerLastName());
-        } else {
-            customer.setLastName(null);
-        }
+        customer.updateCustomer(
+                data.customerName(),
+                data.customerLastName(),
+                data.agency(),
+                data.account()
+        );
 
         customerService.saveCustomer(customer);
+
+        log.tag("name", customer.getName())
+                .tag("lastName", customer.getLastName())
+                .tag("personType", customer.getPersonType().name())
+                .tag("agency", customer.getAgency())
+                .tag("account", customer.getAccount())
+                .tag("accountType", customer.getAccountType().name())
+                .tag("account", customer.getAccount())
+                .tag("keyType", pixKey.getType().name())
+                .tag("keyValue", pixKey.getValue())
+                .info("pix_key_updated");
 
         return pixKey;
     }
@@ -92,10 +121,6 @@ public class PixKeyService {
     }
 
     @Transactional
-    private PixKey savePixKey(PixKey pixKey) {
-        return pixKeyRepository.save(pixKey);
-    }
-
     public PixKey disablePixKey(UUID id) {
         final var pixKey = pixKeyRepository.findById(id)
                 .orElseThrow(() -> new PixKeyNotFoundException(id));
@@ -105,6 +130,10 @@ public class PixKeyService {
         }
 
         pixKey.disableKey();
+
+        log.tag("keyType", pixKey.getType().name())
+                .tag("keyValue", pixKey.getValue())
+                .info("pix_key_disabled");
 
         return pixKeyRepository.save(pixKey);
     }

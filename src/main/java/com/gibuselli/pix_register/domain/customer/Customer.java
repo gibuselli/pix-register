@@ -2,6 +2,7 @@ package com.gibuselli.pix_register.domain.customer;
 
 import com.gibuselli.pix_register.domain.pixkey.PixKey;
 import jakarta.persistence.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -99,6 +100,28 @@ public class Customer implements Serializable {
 
     public AccountType getAccountType() {
         return accountType;
+    }
+
+    public PersonType getPersonType() {
+        return personType;
+    }
+    
+    public void updateCustomer(
+            final String name,
+            final String lastName,
+            final String agency,
+            final String account
+    ) {
+        this.name = name;
+        this.agency = agency;
+        this.account = account;
+
+        if (StringUtils.isNotEmpty(lastName)) {
+            this.lastName = lastName;
+        } else {
+            this.setLastName(null);
+        }
+        
     }
 
     public void setName(String name) {
