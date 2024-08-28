@@ -70,15 +70,55 @@ public class Customer implements Serializable {
     protected Customer() {}
 
     public boolean isLegalPerson() {
-        return PersonType.LEGAL.equals(personType);
+        return PersonType.JURIDICA.equals(personType);
     }
 
     public boolean isNaturalPerson() {
-        return PersonType.NATURAL.equals(personType);
+        return PersonType.FISICA.equals(personType);
     }
 
     public Set<PixKey> getPixKeys() {
         return pixKeys;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getAgency() {
+        return agency;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public AccountType getAccountType() {
+        return accountType;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setAgency(String agency) {
+        this.agency = agency;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    public void setAccountType(AccountType accountType) {
+        this.accountType = accountType;
     }
 
     public void addPixKey(PixKey pixKey) {

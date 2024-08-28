@@ -37,6 +37,9 @@ public class PixKey {
     @Column(name = "UPDATED_AT", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "DISABLED_AT")
+    private LocalDateTime disabledAt;
+
 
     @PrePersist
     protected void onCreate() {
@@ -70,8 +73,25 @@ public class PixKey {
         return value;
     }
 
-    public boolean isEnabled() {
-        return isEnabled;
+    public boolean isDisabled() {
+        return !isEnabled;
+    }
+
+    public void disableKey() {
+        isEnabled = false;
+        disabledAt = LocalDateTime.now();
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getDisabledAt() {
+        return disabledAt;
     }
 
     public static class Builder {

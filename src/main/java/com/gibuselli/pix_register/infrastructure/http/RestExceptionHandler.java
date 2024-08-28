@@ -30,7 +30,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final String ERROR_GENERIC = "Ocorreram erros na requisição. Confira sua solicitação e tente novamente.";
 
-    private static final String DETAILS = "Mais detalhes";
+    private static final String DETAILS = "detail";
 
 
     @Override
@@ -104,18 +104,30 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({
             CnpjOrCpfAlreadyRegistered.class,
-            InvalidKeyException.class,
+            InvalidKeyForNaturalPersonException.class,
             MaxKeysException.class,
             PixKeyAlreadyExistsException.class,
             InvalidKeyType.class,
             InvalidPersonType.class,
-            InvalidAccountType.class
+            InvalidAccountType.class,
+            DisabledPixException.class,
+            InvalidSearchRequestException.class
     })
     protected ResponseEntity<ErrorsResponse> handlePixKeyValidations(final RuntimeException ex) {
         final var errorResponse =
                 new ErrorsResponse(ex.getMessage(), Map.of(DETAILS, ex.getMessage()));
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorResponse);
+    }
+
+    @ExceptionHandler({
+            PixKeyNotFoundException.class
+    })
+    protected ResponseEntity<ErrorsResponse> handleNotFoundResources(final RuntimeException ex) {
+        final var errorResponse =
+                new ErrorsResponse(ex.getMessage(), Map.of(DETAILS, ex.getMessage()));
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
 

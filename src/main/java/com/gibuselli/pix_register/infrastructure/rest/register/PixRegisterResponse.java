@@ -1,4 +1,4 @@
-package com.gibuselli.pix_register.infrastructure.rest;
+package com.gibuselli.pix_register.infrastructure.rest.register;
 
 
 import java.util.UUID;

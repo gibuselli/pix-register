@@ -17,9 +17,9 @@ class PixKeyValidatorTest {
         Customer customer = new Customer.Builder()
                 .name("Empresa XYZ")
                 .agency("0000")
-                .accountType(AccountType.CHECKING_ACCOUNT)
+                .accountType(AccountType.CORRENTE)
                 .account("12345")
-                .personType(PersonType.LEGAL)
+                .personType(PersonType.JURIDICA)
                 .build();
 
         PixKey pixKey = new PixKey.Builder()

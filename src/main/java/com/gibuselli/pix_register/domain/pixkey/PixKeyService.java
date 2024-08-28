@@ -4,10 +4,16 @@ import com.gibuselli.pix_register.application.pixkey.validator.*;
 import com.gibuselli.pix_register.domain.customer.Customer;
 import com.gibuselli.pix_register.domain.customer.CustomerService;
 import com.gibuselli.pix_register.infrastructure.dto.PixRegisterData;
+import com.gibuselli.pix_register.infrastructure.dto.PixSearchParams;
+import com.gibuselli.pix_register.infrastructure.dto.PixUpdateData;
+import com.gibuselli.pix_register.infrastructure.exception.DisabledPixException;
 import com.gibuselli.pix_register.infrastructure.exception.PixKeyAlreadyExistsException;
+import com.gibuselli.pix_register.infrastructure.exception.PixKeyNotFoundException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -47,7 +53,28 @@ public class PixKeyService {
         return pixKey.getId();
     }
 
-    @Transactional
+    public PixKey updatePixKey(PixUpdateData data) {
+        final var pixKey = pixKeyRepository.findByIdAndIsEnabled(data.id(), true)
+                .orElseThrow(() -> new PixKeyNotFoundException(data.id()));
+
+        final var customer = pixKey.getCustomer();
+
+        customer.setAgency(data.agency());
+        customer.setAccount(data.account());
+        customer.setName(data.customerName());
+
+        if (StringUtils.isNotEmpty(data.customerLastName())) {
+            customer.setLastName(data.customerLastName());
+        } else {
+            customer.setLastName(null);
+        }
+
+        customerService.saveCustomer(customer);
+
+        return pixKey;
+    }
+
+    @Transactional()
     private PixKey createAndSavePixKey(
             final Customer customer,
             final KeyType keyType,
@@ -62,5 +89,39 @@ public class PixKeyService {
                         .build();
 
         return pixKeyRepository.save(pixKey);
+    }
+
+    @Transactional
+    private PixKey savePixKey(PixKey pixKey) {
+        return pixKeyRepository.save(pixKey);
+    }
+
+    public PixKey disablePixKey(UUID id) {
+        final var pixKey = pixKeyRepository.findById(id)
+                .orElseThrow(() -> new PixKeyNotFoundException(id));
+
+        if (pixKey.isDisabled()) {
+            throw new DisabledPixException(id);
+        }
+
+        pixKey.disableKey();
+
+        return pixKeyRepository.save(pixKey);
+    }
+
+    public PixKey searchById(UUID id) {
+        return pixKeyRepository.findById(id)
+                .orElseThrow(() -> new PixKeyNotFoundException(id));
+    }
+
+    public List<PixKey> searchByParams(PixSearchParams params) {
+        return pixKeyRepository.queryByParams(
+                params.keyType(),
+                params.agency(),
+                params.account(),
+                params.customerName(),
+                params.createdAt(),
+                params.disabledAt()
+        );
     }
 }

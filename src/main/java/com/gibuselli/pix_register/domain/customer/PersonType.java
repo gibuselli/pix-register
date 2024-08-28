@@ -7,9 +7,9 @@ import java.util.Arrays;
 
 public enum PersonType {
 
-    NATURAL,
+    FISICA,
 
-    LEGAL;
+    JURIDICA;
 
     public static PersonType fromValue(final @NotNull String value) {
         return Arrays.stream(PersonType.class.getEnumConstants())

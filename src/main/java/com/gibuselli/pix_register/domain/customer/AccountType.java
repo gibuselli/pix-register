@@ -6,11 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Arrays;
 
 public enum AccountType {
-    /** Conta corrente */
-    CHECKING_ACCOUNT,
-
-    /** Conta poupança */
-    SAVINGS_ACCOUNT;
+    CORRENTE,
+    POUPANCA;
 
     public static AccountType fromValue(final @NotNull String value) {
         return Arrays.stream(AccountType.class.getEnumConstants())

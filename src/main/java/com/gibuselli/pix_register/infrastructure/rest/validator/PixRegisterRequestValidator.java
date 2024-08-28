@@ -1,7 +1,7 @@
 package com.gibuselli.pix_register.infrastructure.rest.validator;
 
 import com.gibuselli.pix_register.domain.pixkey.KeyType;
-import com.gibuselli.pix_register.infrastructure.rest.PixRegisterRequest;
+import com.gibuselli.pix_register.infrastructure.rest.register.PixRegisterRequest;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -37,7 +37,7 @@ public class PixRegisterRequestValidator implements ConstraintValidator<ValidPix
     }
 
     private boolean validatePhone(String phone, ConstraintValidatorContext context) {
-        if (phone == null || !phone.matches("\\+55\\d{10,12}")) {
+        if (phone == null || !phone.matches("^\\+55\\d{2,3}9\\d{8}$")) {
             context
                     .buildConstraintViolationWithTemplate("Telefone inválido. O formato deve ser +5511999999999.")
                     .addConstraintViolation();

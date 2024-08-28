@@ -45,4 +45,9 @@ public class CustomerService {
                         data.personType()
                 ));
     }
+
+    @Transactional
+    public Customer saveCustomer(Customer customer) {
+        return customerRepository.save(customer);
+    }
 }
