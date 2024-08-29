@@ -79,7 +79,7 @@ public class PixKeyService {
         final var pixKey = pixKeyRepository.findByIdAndIsEnabled(data.id(), true)
                 .orElseThrow(() -> new PixKeyNotFoundException(data.id()));
 
-        if (accountService.existsByAgencyAndAccountNumber(data.agency(), data.accountNumber())) {
+        if (pixKeyRepository.existsByAgencyAndAccountAndNotByPixKeyId(data.agency(), data.accountNumber(), data.id())) {
             throw new AccountAlreadyExistsException(data.agency(), data.accountNumber());
         }
 

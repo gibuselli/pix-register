@@ -32,8 +32,8 @@ public class ApplicationStartupNotifier implements ApplicationListener<Applicati
 
         String swaggerUrl = appPath + swaggerPath;
 
-        logger.info("Application {} is running!", appName.toUpperCase());
-        logger.info("Swagger URL: http://localhost:{}{}", environment.getProperty("server.port", "8080"), swaggerUrl);
         logger.info("Active profile: {}", profiles);
+        logger.info("Swagger URL: http://localhost:{}{}", environment.getProperty("server.port", "8080"), swaggerUrl);
+        logger.info("Application {} is running!", appName.toUpperCase());
     }
 }

@@ -4,6 +4,8 @@ import com.gibuselli.pix_register.infrastructure.dto.PixRegisterData;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 public class AccountService {
 
@@ -51,7 +53,7 @@ public class AccountService {
         accountRepository.save(account);
     }
 
-    public boolean existsByAgencyAndAccountNumber(String agency, String accountNumber) {
-        return accountRepository.existsByAgencyAndAccountNumber(agency, accountNumber);
+    public boolean existsByAgencyAndAccountNumber(String agency, String accountNumber, UUID id) {
+        return accountRepository.existsByAgencyAndAccountNumberAndIdNot(agency, accountNumber, id);
     }
 }

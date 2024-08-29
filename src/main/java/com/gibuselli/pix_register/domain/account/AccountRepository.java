@@ -9,5 +9,5 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
 
     Optional<Account> findByAgencyAndAccountNumber(String agency, String accountNumber);
 
-    boolean existsByAgencyAndAccountNumber(String agency, String accountNumber);
+    boolean existsByAgencyAndAccountNumberAndIdNot(String agency, String accountNumber, UUID id);
 }

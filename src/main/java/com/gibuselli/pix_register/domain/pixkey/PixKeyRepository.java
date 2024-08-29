@@ -28,4 +28,14 @@ public interface PixKeyRepository extends JpaRepository<PixKey, UUID> {
                               @Param("customerName") String customerName,
                               @Param("createdAt") LocalDate createdAt,
                               @Param("disabledAt") LocalDate disabledAt);
+
+    @Query("SELECT CASE WHEN COUNT(pk) > 0 THEN TRUE ELSE FALSE END " +
+            "FROM PixKey pk " +
+            "JOIN pk.account acc " +
+            "WHERE acc.agency = :agency " +
+            "AND acc.accountNumber = :accountNumber " +
+            "AND pk.id <> :id")
+    boolean existsByAgencyAndAccountAndNotByPixKeyId(@Param("agency") String agency,
+                                                @Param("accountNumber") String accountNumber,
+                                                @Param("id") UUID id);
 }
