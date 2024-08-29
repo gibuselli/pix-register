@@ -42,7 +42,7 @@ public class PixRegisterController {
             @RequestParam(required = false) UUID id,
             @RequestParam(required = false) String keyType,
             @RequestParam(required = false) String agency,
-            @RequestParam(required = false) String account,
+            @RequestParam(required = false) String accountNumber,
             @RequestParam(required = false) String customerName,
             @RequestParam(required = false) LocalDate createdAt,
             @RequestParam(required = false) LocalDate disabledAt
@@ -50,7 +50,7 @@ public class PixRegisterController {
         if (id != null) {
             if (keyType != null
                     || agency != null
-                    || account != null
+                    || accountNumber != null
                     || customerName != null
                     || createdAt != null
                     || disabledAt != null) {
@@ -69,7 +69,7 @@ public class PixRegisterController {
                                 .map(KeyType::fromValue)
                                 .orElse(null),
                         agency,
-                        account,
+                        accountNumber,
                         customerName,
                         createdAt,
                         disabledAt

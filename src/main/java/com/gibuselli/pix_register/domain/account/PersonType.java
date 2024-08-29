@@ -1,6 +1,6 @@
-package com.gibuselli.pix_register.domain.customer;
+package com.gibuselli.pix_register.domain.account;
 
-import com.gibuselli.pix_register.infrastructure.exception.InvalidPersonType;
+import com.gibuselli.pix_register.infrastructure.exception.InvalidPersonTypeException;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Arrays;
@@ -15,6 +15,6 @@ public enum PersonType {
         return Arrays.stream(PersonType.class.getEnumConstants())
                 .filter(e -> value.equalsIgnoreCase(e.name()))
                 .findFirst()
-                .orElseThrow(() -> new InvalidPersonType(value));
+                .orElseThrow(() -> new InvalidPersonTypeException(value));
     }
 }

@@ -1,6 +1,6 @@
 package com.gibuselli.pix_register.application.pixkey.validator;
 
-import com.gibuselli.pix_register.domain.customer.Customer;
+import com.gibuselli.pix_register.domain.account.Account;
 import com.gibuselli.pix_register.domain.pixkey.KeyType;
 
 import java.util.ArrayList;
@@ -15,12 +15,12 @@ public class PixKeyValidatorContext {
     }
 
     public void validate(
-            final Customer customer,
+            final Account account,
             final KeyType keyType,
             final String keyValue) {
 
         for (PixKeyValidator validator : validators) {
-            validator.validate(customer, keyType, keyValue);
+            validator.validate(account, keyType, keyValue);
         }
     }
 

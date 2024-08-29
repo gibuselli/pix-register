@@ -1,6 +1,6 @@
-package com.gibuselli.pix_register.domain.customer;
+package com.gibuselli.pix_register.domain.account;
 
-import com.gibuselli.pix_register.infrastructure.exception.InvalidAccountType;
+import com.gibuselli.pix_register.infrastructure.exception.InvalidAccountTypeException;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Arrays;
@@ -13,6 +13,6 @@ public enum AccountType {
         return Arrays.stream(AccountType.class.getEnumConstants())
                 .filter(e -> value.equalsIgnoreCase(e.name()))
                 .findFirst()
-                .orElseThrow(() -> new InvalidAccountType(value));
+                .orElseThrow(() -> new InvalidAccountTypeException(value));
     }
 }

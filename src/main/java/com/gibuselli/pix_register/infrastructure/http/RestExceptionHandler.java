@@ -107,11 +107,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             InvalidKeyForNaturalPersonException.class,
             MaxKeysException.class,
             PixKeyAlreadyExistsException.class,
-            InvalidKeyType.class,
-            InvalidPersonType.class,
-            InvalidAccountType.class,
+            InvalidKeyTypeException.class,
+            InvalidPersonTypeException.class,
+            InvalidAccountTypeException.class,
             DisabledPixException.class,
-            InvalidSearchRequestException.class
+            InvalidSearchRequestException.class,
+            AccountAlreadyExistsException.class
     })
     protected ResponseEntity<ErrorsResponse> handlePixKeyValidations(final RuntimeException ex) {
         final var errorResponse =

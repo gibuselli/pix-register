@@ -1,4 +1,4 @@
-package com.gibuselli.pix_register.domain.customer;
+package com.gibuselli.pix_register.domain.account;
 
 import com.gibuselli.pix_register.domain.pixkey.PixKey;
 import jakarta.persistence.*;
@@ -11,25 +11,25 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "CUSTOMER")
-public class Customer implements Serializable {
+@Table(name = "ACCOUNT")
+public class Account implements Serializable {
 
     @Id
-    @Column(name = "CUSTOMER_ID")
+    @Column(name = "ACCOUNT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column(nullable = false)
-    private String name;
+    private String customerName;
 
     @Column
-    private String lastName;
+    private String customerLastName;
 
     @Column(nullable = false)
     private String agency;
 
-    @Column(nullable = false)
-    private String account;
+    @Column(name = "ACCOUNT_NUMBER", nullable = false)
+    private String accountNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "ACCOUNT_TYPE", nullable = false)
@@ -39,7 +39,7 @@ public class Customer implements Serializable {
     @Column(name = "PERSON_TYPE", nullable = false)
     private PersonType personType;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PixKey> pixKeys = new HashSet<>();
 
     @Column(name = "CREATED_AT", nullable = false, updatable = false)
@@ -59,16 +59,16 @@ public class Customer implements Serializable {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public Customer(Builder builder) {
-        this.name = builder.name;
-        this.lastName = builder.lastName;
+    public Account(Builder builder) {
+        this.customerName = builder.name;
+        this.customerLastName = builder.lastName;
         this.agency = builder.agency;
-        this.account = builder.account;
+        this.accountNumber = builder.accountNumber;
         this.accountType = builder.accountType;
         this.personType = builder.personType;
     }
 
-    protected Customer() {}
+    protected Account() {}
 
     public boolean isLegalPerson() {
         return PersonType.JURIDICA.equals(personType);
@@ -82,20 +82,20 @@ public class Customer implements Serializable {
         return pixKeys;
     }
 
-    public String getName() {
-        return name;
+    public String getCustomerName() {
+        return customerName;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getCustomerLastName() {
+        return customerLastName;
     }
 
     public String getAgency() {
         return agency;
     }
 
-    public String getAccount() {
-        return account;
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
     public AccountType getAccountType() {
@@ -106,38 +106,38 @@ public class Customer implements Serializable {
         return personType;
     }
     
-    public void updateCustomer(
+    public void updateAccount(
             final String name,
             final String lastName,
             final String agency,
             final String account
     ) {
-        this.name = name;
+        this.customerName = name;
         this.agency = agency;
-        this.account = account;
+        this.accountNumber = account;
 
         if (StringUtils.isNotEmpty(lastName)) {
-            this.lastName = lastName;
+            this.customerLastName = lastName;
         } else {
-            this.setLastName(null);
+            this.setCustomerLastName(null);
         }
         
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setCustomerLastName(String customerLastName) {
+        this.customerLastName = customerLastName;
     }
 
     public void setAgency(String agency) {
         this.agency = agency;
     }
 
-    public void setAccount(String account) {
-        this.account = account;
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 
     public void setAccountType(AccountType accountType) {
@@ -152,7 +152,7 @@ public class Customer implements Serializable {
         private String name;
         private String lastName;
         private String agency;
-        private String account;
+        private String accountNumber;
         private AccountType accountType;
         private PersonType personType;
 
@@ -171,8 +171,8 @@ public class Customer implements Serializable {
             return this;
         }
 
-        public Builder account(String account) {
-            this.account = account;
+        public Builder accountNumber(String accountNumber) {
+            this.accountNumber = accountNumber;
             return this;
         }
 
@@ -186,8 +186,8 @@ public class Customer implements Serializable {
             return this;
         }
 
-        public Customer build() {
-            return new Customer(this);
+        public Account build() {
+            return new Account(this);
         }
     }
 }

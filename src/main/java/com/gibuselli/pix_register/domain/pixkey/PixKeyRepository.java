@@ -15,17 +15,17 @@ public interface PixKeyRepository extends JpaRepository<PixKey, UUID> {
 
     Optional<PixKey> findByIdAndIsEnabled(UUID id, boolean isEnabled);
 
-    @Query("SELECT p FROM PixKey p JOIN p.customer c WHERE " +
+    @Query("SELECT p FROM PixKey p JOIN p.account a WHERE " +
             "(:type IS NULL OR p.type = :type) " +
-            "AND (:agency IS NULL OR c.agency = :agency) " +
-            "AND (:account IS NULL OR c.account = :account) " +
-            "AND (LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%')) OR :name IS NULL) " +
+            "AND (:agency IS NULL OR a.agency = :agency) " +
+            "AND (:accountNumber IS NULL OR a.accountNumber = :accountNumber) " +
+            "AND (LOWER(a.customerName) LIKE LOWER(CONCAT('%', :customerName, '%')) OR :customerName IS NULL) " +
             "AND (cast(:createdAt as date) IS NULL OR CAST(p.createdAt AS date) = :createdAt) " +
             "AND (cast(:disabledAt as date) IS NULL OR CAST(p.disabledAt AS date) = :disabledAt)")
     List<PixKey> queryByParams(@Param("type") KeyType type,
                               @Param("agency") String agency,
-                              @Param("account") String account,
-                              @Param("name") String name,
+                              @Param("accountNumber") String accountNumber,
+                              @Param("customerName") String customerName,
                               @Param("createdAt") LocalDate createdAt,
                               @Param("disabledAt") LocalDate disabledAt);
 }

@@ -1,8 +1,8 @@
 package com.gibuselli.pix_register.application.pixkey.validator;
 
-import com.gibuselli.pix_register.domain.customer.AccountType;
-import com.gibuselli.pix_register.domain.customer.Customer;
-import com.gibuselli.pix_register.domain.customer.PersonType;
+import com.gibuselli.pix_register.domain.account.AccountType;
+import com.gibuselli.pix_register.domain.account.Account;
+import com.gibuselli.pix_register.domain.account.PersonType;
 import com.gibuselli.pix_register.domain.pixkey.KeyType;
 import com.gibuselli.pix_register.domain.pixkey.PixKey;
 import jakarta.validation.ValidationException;
@@ -14,11 +14,11 @@ class PixKeyValidatorTest {
     @Test
     void testLegalPersonValidator_WithExistingCnpjKey_ShouldThrowException() {
         // Arrange
-        Customer customer = new Customer.Builder()
+        Account account = new Account.Builder()
                 .name("Empresa XYZ")
                 .agency("0000")
                 .accountType(AccountType.CORRENTE)
-                .account("12345")
+                .accountNumber("12345")
                 .personType(PersonType.JURIDICA)
                 .build();
 
@@ -26,15 +26,15 @@ class PixKeyValidatorTest {
                 .type(KeyType.CNPJ)
                 .value("12345678000195")
                 .isEnabled(true)
-                .customer(customer)
+                .account(account)
                 .build();
 
-        customer.addPixKey(pixKey);
+        account.addPixKey(pixKey);
 
         LegalPersonValidator validator = new LegalPersonValidator();
 
         ValidationException exception = Assertions.assertThrows(ValidationException.class,
-                () -> validator.validate(customer, KeyType.CNPJ, "12345678000190"));
+                () -> validator.validate(account, KeyType.CNPJ, "12345678000190"));
 
         Assertions.assertEquals("Já existe uma chave CNPJ", exception.getMessage());
     }

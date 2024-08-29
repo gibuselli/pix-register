@@ -1,11 +1,12 @@
 package com.gibuselli.pix_register.domain.pixkey;
 
 import com.gibuselli.pix_register.application.pixkey.validator.*;
-import com.gibuselli.pix_register.domain.customer.Customer;
-import com.gibuselli.pix_register.domain.customer.CustomerService;
+import com.gibuselli.pix_register.domain.account.Account;
+import com.gibuselli.pix_register.domain.account.AccountService;
 import com.gibuselli.pix_register.infrastructure.dto.PixRegisterData;
 import com.gibuselli.pix_register.infrastructure.dto.PixSearchParams;
 import com.gibuselli.pix_register.infrastructure.dto.PixUpdateData;
+import com.gibuselli.pix_register.infrastructure.exception.AccountAlreadyExistsException;
 import com.gibuselli.pix_register.infrastructure.exception.DisabledPixException;
 import com.gibuselli.pix_register.infrastructure.exception.PixKeyAlreadyExistsException;
 import com.gibuselli.pix_register.infrastructure.exception.PixKeyNotFoundException;
@@ -23,13 +24,13 @@ public class PixKeyService {
 
     private final PixKeyRepository pixKeyRepository;
 
-    private final CustomerService customerService;
+    private final AccountService accountService;
 
     private final PixKeyValidatorContext validatorContext;
 
-    public PixKeyService(PixKeyRepository pixKeyRepository, CustomerService customerService) {
+    public PixKeyService(PixKeyRepository pixKeyRepository, AccountService accountService) {
         this.pixKeyRepository = pixKeyRepository;
-        this.customerService = customerService;
+        this.accountService = accountService;
 
         validatorContext = new PixKeyValidatorContext();
         validatorContext.add(new MaxKeysValidator());
@@ -43,29 +44,29 @@ public class PixKeyService {
             throw new PixKeyAlreadyExistsException(data.keyType().name(), data.keyValue());
         }
 
-        final var customer = customerService.findOrCreateNew(data);
+        final var customer = accountService.findOrCreateNew(data);
 
         try {
             validatorContext.validate(customer, data.keyType(), data.keyValue());
         } catch (Exception ex) {
             log.tag("agency", customer.getAgency())
-                    .tag("account", customer.getAccount())
+                    .tag("accountNumber", customer.getAccountNumber())
                     .tag("keyType", data.keyType().name())
                     .tag("keyValue", data.keyValue())
-                    .error(ex.getMessage());
+                    .warn(ex.getMessage());
 
             throw ex;
         }
 
         final var pixKey = createAndSavePixKey(customer, data.keyType(), data.keyValue());
 
-        log.tag("name", customer.getName())
-                .tag("lastName", customer.getLastName())
+        log.tag("name", customer.getCustomerName())
+                .tag("lastName", customer.getCustomerLastName())
                 .tag("personType", customer.getPersonType().name())
                 .tag("agency", customer.getAgency())
-                .tag("account", customer.getAccount())
+                .tag("accountNumber", customer.getAccountNumber())
                 .tag("accountType", customer.getAccountType().name())
-                .tag("account", customer.getAccount())
+                .tag("accountNumber", customer.getAccountNumber())
                 .tag("keyType", pixKey.getType().name())
                 .tag("keyValue", pixKey.getValue())
                 .info("pix_key_created");
@@ -78,24 +79,28 @@ public class PixKeyService {
         final var pixKey = pixKeyRepository.findByIdAndIsEnabled(data.id(), true)
                 .orElseThrow(() -> new PixKeyNotFoundException(data.id()));
 
+        if (accountService.existsByAgencyAndAccountNumber(data.agency(), data.accountNumber())) {
+            throw new AccountAlreadyExistsException(data.agency(), data.accountNumber());
+        }
+
         final var customer = pixKey.getCustomer();
 
-        customer.updateCustomer(
+        customer.updateAccount(
                 data.customerName(),
                 data.customerLastName(),
                 data.agency(),
-                data.account()
+                data.accountNumber()
         );
 
-        customerService.saveCustomer(customer);
+        accountService.saveAccount(customer);
 
-        log.tag("name", customer.getName())
-                .tag("lastName", customer.getLastName())
+        log.tag("name", customer.getCustomerName())
+                .tag("lastName", customer.getCustomerLastName())
                 .tag("personType", customer.getPersonType().name())
                 .tag("agency", customer.getAgency())
-                .tag("account", customer.getAccount())
+                .tag("accountNumber", customer.getAccountNumber())
                 .tag("accountType", customer.getAccountType().name())
-                .tag("account", customer.getAccount())
+                .tag("accountNumber", customer.getAccountNumber())
                 .tag("keyType", pixKey.getType().name())
                 .tag("keyValue", pixKey.getValue())
                 .info("pix_key_updated");
@@ -105,13 +110,13 @@ public class PixKeyService {
 
     @Transactional()
     private PixKey createAndSavePixKey(
-            final Customer customer,
+            final Account account,
             final KeyType keyType,
             final String keyValue) {
 
         final var pixKey =
                 new PixKey.Builder()
-                        .customer(customer)
+                        .account(account)
                         .type(keyType)
                         .value(keyValue)
                         .isEnabled(true)
@@ -147,7 +152,7 @@ public class PixKeyService {
         return pixKeyRepository.queryByParams(
                 params.keyType(),
                 params.agency(),
-                params.account(),
+                params.accountNumber(),
                 params.customerName(),
                 params.createdAt(),
                 params.disabledAt()

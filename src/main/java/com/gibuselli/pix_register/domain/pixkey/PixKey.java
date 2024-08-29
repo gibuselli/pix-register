@@ -1,6 +1,6 @@
 package com.gibuselli.pix_register.domain.pixkey;
 
-import com.gibuselli.pix_register.domain.customer.Customer;
+import com.gibuselli.pix_register.domain.account.Account;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -9,7 +9,7 @@ import java.util.UUID;
 @Entity
 @Table(
         name = "PIX_KEY",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"CUSTOMER_ID", "TYPE", "VALUE"})})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"ACCOUNT_ID", "TYPE", "VALUE"})})
 public class PixKey {
 
     @Id
@@ -18,8 +18,8 @@ public class PixKey {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
-    private Customer customer;
+    @JoinColumn(name = "ACCOUNT_ID", nullable = false)
+    private Account account;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -53,7 +53,7 @@ public class PixKey {
     }
 
     public PixKey(Builder builder) {
-        this.customer = builder.customer;
+        this.account = builder.account;
         this.type = builder.type;
         this.value = builder.value;
         this.isEnabled = builder.isEnabled;
@@ -82,8 +82,8 @@ public class PixKey {
         disabledAt = LocalDateTime.now();
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public Account getCustomer() {
+        return account;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -95,13 +95,13 @@ public class PixKey {
     }
 
     public static class Builder {
-        private Customer customer;
+        private Account account;
         private KeyType type;
         private String value;
         private boolean isEnabled;
 
-        public Builder customer(Customer customer) {
-            this.customer = customer;
+        public Builder account(Account account) {
+            this.account = account;
             return this;
         }
 

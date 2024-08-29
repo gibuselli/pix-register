@@ -1,10 +1,10 @@
 package com.gibuselli.pix_register.infrastructure.exception;
 
-public class InvalidPersonType extends RuntimeException {
+public class InvalidPersonTypeException extends RuntimeException {
 
     private static final String MESSAGE = "Tipo de cliente inválido - %s";
 
-    public InvalidPersonType(String keyType) {
+    public InvalidPersonTypeException(String keyType) {
         super(String.format(MESSAGE, keyType));
     }
 }

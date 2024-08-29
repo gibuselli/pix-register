@@ -7,7 +7,7 @@ import java.time.LocalDate;
 public record PixSearchParams(
         KeyType keyType,
         String agency,
-        String account,
+        String accountNumber,
         String customerName,
         LocalDate createdAt,
         LocalDate disabledAt

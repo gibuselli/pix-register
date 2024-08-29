@@ -1,7 +1,7 @@
 package com.gibuselli.pix_register.interfaces.pixregister;
 
-import com.gibuselli.pix_register.domain.customer.AccountType;
-import com.gibuselli.pix_register.domain.customer.PersonType;
+import com.gibuselli.pix_register.domain.account.AccountType;
+import com.gibuselli.pix_register.domain.account.PersonType;
 import com.gibuselli.pix_register.domain.pixkey.KeyType;
 import com.gibuselli.pix_register.domain.pixkey.PixKeyService;
 import com.gibuselli.pix_register.infrastructure.dto.PixRegisterData;
@@ -64,9 +64,9 @@ public class PixRegisterFacade {
                 updatedPixKey.getValue(),
                 updatedPixKey.getCustomer().getAccountType().name(),
                 updatedPixKey.getCustomer().getAgency(),
-                updatedPixKey.getCustomer().getAccount(),
-                updatedPixKey.getCustomer().getName(),
-                Optional.ofNullable(updatedPixKey.getCustomer().getLastName()).orElse(""),
+                updatedPixKey.getCustomer().getAccountNumber(),
+                updatedPixKey.getCustomer().getCustomerName(),
+                Optional.ofNullable(updatedPixKey.getCustomer().getCustomerLastName()).orElse(""),
                 updatedPixKey.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         );
 
@@ -94,9 +94,9 @@ public class PixRegisterFacade {
                 pixKey.getValue(),
                 pixKey.getCustomer().getAccountType().name(),
                 pixKey.getCustomer().getAgency(),
-                pixKey.getCustomer().getAccount(),
-                pixKey.getCustomer().getName(),
-                Optional.ofNullable(pixKey.getCustomer().getLastName()).orElse(""),
+                pixKey.getCustomer().getAccountNumber(),
+                pixKey.getCustomer().getCustomerName(),
+                Optional.ofNullable(pixKey.getCustomer().getCustomerLastName()).orElse(""),
                 pixKey.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                 Optional.ofNullable(pixKey.getDisabledAt())
                         .map(date -> date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
@@ -117,9 +117,9 @@ public class PixRegisterFacade {
                             pixKey.getValue(),
                             pixKey.getCustomer().getAccountType().name(),
                             pixKey.getCustomer().getAgency(),
-                            pixKey.getCustomer().getAccount(),
-                            pixKey.getCustomer().getName(),
-                            Optional.ofNullable(pixKey.getCustomer().getLastName()).orElse(""),
+                            pixKey.getCustomer().getAccountNumber(),
+                            pixKey.getCustomer().getCustomerName(),
+                            Optional.ofNullable(pixKey.getCustomer().getCustomerLastName()).orElse(""),
                             pixKey.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                             Optional.ofNullable(pixKey.getDisabledAt())
                                     .map(date -> date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))

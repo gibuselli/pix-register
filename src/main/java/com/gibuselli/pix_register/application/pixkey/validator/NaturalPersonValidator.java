@@ -1,6 +1,6 @@
 package com.gibuselli.pix_register.application.pixkey.validator;
 
-import com.gibuselli.pix_register.domain.customer.Customer;
+import com.gibuselli.pix_register.domain.account.Account;
 import com.gibuselli.pix_register.domain.pixkey.KeyType;
 import com.gibuselli.pix_register.infrastructure.exception.CnpjOrCpfAlreadyRegistered;
 import com.gibuselli.pix_register.infrastructure.exception.InvalidKeyForNaturalPersonException;
@@ -10,8 +10,8 @@ import static com.gibuselli.pix_register.domain.pixkey.KeyType.CPF;
 
 public class NaturalPersonValidator implements PixKeyValidator {
     @Override
-    public void validate(Customer customer, KeyType keyType, String keyValue) {
-        if (customer.isLegalPerson()) {
+    public void validate(Account account, KeyType keyType, String keyValue) {
+        if (account.isLegalPerson()) {
             return;
         }
 
@@ -19,7 +19,7 @@ public class NaturalPersonValidator implements PixKeyValidator {
             throw new InvalidKeyForNaturalPersonException();
         }
 
-        final var hasCpfKey = customer.getPixKeys().stream().anyMatch(key -> CPF.equals(keyType));
+        final var hasCpfKey = account.getPixKeys().stream().anyMatch(key -> CPF.equals(keyType));
 
         if (hasCpfKey) {
             throw new CnpjOrCpfAlreadyRegistered(keyType.name());
